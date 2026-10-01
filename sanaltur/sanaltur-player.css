@@ -1,0 +1,119 @@
+/* Sanal Tur Player — editörde ve export edilen turlarda ortak görünüm */
+.pnlm-title-box { display: none !important; }
+
+.sanaltur-root { position: relative; width: 100%; height: 100%; overflow: hidden; background: #000; font-family: system-ui, -apple-system, "Segoe UI", Roboto, sans-serif; color: #fff; -webkit-tap-highlight-color: transparent; }
+.sanaltur-viewer { position: absolute; top: 0; right: 0; bottom: 0; left: 0; z-index: 0; }
+/* Derinlikli geçiş perdesi: pannellum'un üstünde, arayüzün altında */
+.sanaltur-walk { position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 5; display: none; pointer-events: none; }
+.sanaltur-root button { font-family: inherit; }
+
+/* --- Noktalar --- */
+.sanaltur-hotspot { background-repeat: no-repeat; background-position: center; background-size: contain; background-color: transparent; border: none; border-radius: 50%; cursor: pointer; }
+.sanaltur-hotspot--editable { cursor: grab; }
+.sanaltur-hotspot--dragging { cursor: grabbing; opacity: 0.75; }
+/* Editör: bulanıklaştırılacak alan (arkasındaki fotoğrafı gerçekten bulanıklaştırır) */
+.sanaltur-blur-marker { border-radius: 50%; border: 2px dashed rgba(255, 255, 255, 0.95); box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.45); background: rgba(255, 255, 255, 0.06); backdrop-filter: blur(10px); -webkit-backdrop-filter: blur(10px); cursor: grab; }
+.sanaltur-hotspot--selected { box-shadow: 0 0 0 3px #FFD700, 0 0 12px 2px rgba(255, 215, 0, 0.7); }
+.sanaltur-tooltip { display: none; position: absolute; bottom: 110%; left: 50%; transform: translateX(-50%); background: rgba(0, 0, 0, 0.85); color: #fff; padding: 8px 12px; border-radius: 6px; font-size: 13px; line-height: 1.35; pointer-events: none; min-width: 120px; max-width: 260px; width: max-content; text-align: center; box-shadow: 0 2px 10px rgba(0, 0, 0, 0.3); white-space: pre-line; }
+.sanaltur-tooltip--small { font-size: 11px; }
+.sanaltur-hotspot:hover .sanaltur-tooltip { display: block; }
+.sanaltur-tooltip__header { font-weight: bold; margin-bottom: 4px; font-size: 1.1em; color: #FFD700; }
+.sanaltur-tooltip__hint { font-size: 10px; color: #4da6ff; margin-top: 4px; }
+@media (hover: none) {
+  /* Dokunmatik ekranlarda üstüne gelme yok: bilgi noktaları dokununca pencere açar, oda isimleri hep görünür */
+  .sanaltur-hotspot--info .sanaltur-tooltip { display: none !important; }
+  .sanaltur-hotspot--label .sanaltur-tooltip { display: block; }
+}
+
+/* --- Ortak kutu / buton görünümü --- */
+.sanaltur-panel { background: rgba(0, 0, 0, 0.65); border: 1px solid rgba(255, 255, 255, 0.18); border-radius: 10px; backdrop-filter: blur(6px); -webkit-backdrop-filter: blur(6px); }
+.sanaltur-btn { display: inline-flex; align-items: center; justify-content: center; gap: 6px; min-width: 40px; height: 40px; padding: 0 10px; border-radius: 20px; border: 1px solid rgba(255, 255, 255, 0.35); background: rgba(0, 0, 0, 0.6); color: #fff; font-size: 17px; cursor: pointer; text-decoration: none; }
+.sanaltur-btn:hover { background: rgba(255, 255, 255, 0.95); color: #000; }
+.sanaltur-btn--active, .sanaltur-btn--active:hover { background: var(--sanaltur-accent, #007BFF); border-color: var(--sanaltur-accent, #007BFF); color: #fff; }
+.sanaltur-btn--whatsapp { background: #25D366; border-color: #25D366; }
+
+/* --- Üst orta: logo ve başlık --- */
+.sanaltur-brand { position: absolute; top: 14px; left: 50%; transform: translateX(-50%); z-index: 10; display: flex; align-items: center; gap: 10px; padding: 6px 14px; max-width: calc(100% - 220px); pointer-events: none; }
+.sanaltur-brand img { height: 32px; max-width: 120px; object-fit: contain; }
+.sanaltur-brand span { font-weight: 600; font-size: 15px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+
+/* --- Üst orta: öncesi / sonrası seçici --- */
+.sanaltur-variants { position: absolute; top: 64px; left: 50%; transform: translateX(-50%); z-index: 10; display: flex; gap: 3px; padding: 4px; max-width: calc(100% - 24px); overflow-x: auto; }
+.sanaltur-variant-btn { background: none; border: none; color: #fff; padding: 7px 14px; border-radius: 7px; cursor: pointer; font-size: 13px; white-space: nowrap; }
+.sanaltur-variant-btn:hover { background: rgba(255, 255, 255, 0.15); }
+.sanaltur-variant-btn--active, .sanaltur-variant-btn--active:hover { background: var(--sanaltur-accent, #007BFF); font-weight: bold; }
+
+/* --- Sağ üst: katlar --- */
+.sanaltur-floors { position: absolute; top: 14px; right: 14px; z-index: 10; display: flex; flex-direction: column; gap: 8px; }
+.sanaltur-floor-btn { background: rgba(0, 0, 0, 0.7); color: #fff; padding: 9px 18px; border: 1px solid #fff; cursor: pointer; border-radius: 5px; font-weight: bold; text-align: right; font-size: 14px; }
+.sanaltur-floor-btn:hover { background: #fff; color: #000; }
+.sanaltur-floor-btn--active, .sanaltur-floor-btn--active:hover { background: var(--sanaltur-accent, #007BFF); border-color: var(--sanaltur-accent, #007BFF); color: #fff; }
+
+/* --- Sağ alt: eylem butonları --- */
+.sanaltur-actions { position: absolute; right: 14px; bottom: calc(var(--sanaltur-strip-h, 0px) + 14px); z-index: 10; display: flex; flex-direction: column; gap: 8px; align-items: flex-end; transition: bottom 0.25s; }
+
+.sanaltur-lang-btn { font-size: 13px; font-weight: bold; }
+.sanaltur-lang-menu { display: flex; flex-direction: column; padding: 4px; gap: 2px; }
+.sanaltur-lang-option { background: none; border: none; color: #fff; padding: 7px 12px; text-align: left; border-radius: 6px; cursor: pointer; font-size: 14px; }
+.sanaltur-lang-option:hover { background: rgba(255, 255, 255, 0.15); }
+.sanaltur-lang-option--active { background: var(--sanaltur-accent, #007BFF); }
+
+/* --- Alt: oda şeridi --- */
+.sanaltur-strip { position: absolute; left: 0; right: 0; bottom: 0; z-index: 9; display: flex; gap: 8px; padding: 8px 10px; overflow-x: auto; background: linear-gradient(to top, rgba(0, 0, 0, 0.8), rgba(0, 0, 0, 0.35)); scrollbar-width: thin; }
+.sanaltur-strip--hidden { display: none; }
+.sanaltur-strip-item { flex: 0 0 auto; width: 132px; border: 2px solid transparent; border-radius: 8px; overflow: hidden; background: #222; padding: 0; cursor: pointer; color: #fff; text-align: left; }
+.sanaltur-strip-item img, .sanaltur-strip-item .sanaltur-strip-thumb { display: block; width: 100%; height: 56px; object-fit: cover; background: #333; }
+.sanaltur-strip-item span { display: block; padding: 4px 6px; font-size: 12px; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.sanaltur-strip-item--active { border-color: var(--sanaltur-accent, #007BFF); }
+.sanaltur-strip-item:hover { border-color: rgba(255, 255, 255, 0.7); }
+
+/* --- Sol alt: mini harita --- */
+.sanaltur-minimap { position: absolute; left: 14px; bottom: calc(var(--sanaltur-strip-h, 0px) + 14px); z-index: 10; padding: 6px; transition: bottom 0.25s; }
+.sanaltur-minimap-inner { position: relative; }
+.sanaltur-minimap-inner > img { display: block; width: 100%; height: 100%; border-radius: 6px; background: #fff; object-fit: fill; }
+.sanaltur-minimap-dot { position: absolute; width: 14px; height: 14px; margin: -7px 0 0 -7px; border-radius: 50%; background: var(--sanaltur-accent, #007BFF); border: 2px solid #fff; padding: 0; cursor: pointer; box-shadow: 0 1px 4px rgba(0, 0, 0, 0.5); }
+.sanaltur-minimap-dot--active { background: #FF5722; width: 16px; height: 16px; margin: -8px 0 0 -8px; z-index: 2; }
+.sanaltur-minimap-cone { position: absolute; width: 90px; height: 90px; margin: -45px 0 0 -45px; pointer-events: none; z-index: 1; }
+.sanaltur-minimap-toggle { position: absolute; top: -12px; right: -12px; width: 26px; height: 26px; min-width: 0; padding: 0; font-size: 13px; }
+
+/* --- Pencereler --- */
+.sanaltur-message { position: absolute; top: 0; right: 0; bottom: 0; left: 0; z-index: 20; display: none; align-items: center; justify-content: center; padding: 20px; text-align: center; color: #fff; background: rgba(0, 0, 0, 0.6); font-size: 15px; line-height: 1.5; pointer-events: none; white-space: pre-line; }
+.sanaltur-message--visible { display: flex; }
+.sanaltur-message--error { background: rgba(0, 0, 0, 0.85); pointer-events: auto; }
+.sanaltur-toast { position: absolute; left: 50%; bottom: calc(var(--sanaltur-strip-h, 0px) + 24px); transform: translateX(-50%); z-index: 25; padding: 8px 14px; font-size: 13px; pointer-events: none; }
+
+.sanaltur-modal { position: absolute; top: 0; right: 0; bottom: 0; left: 0; z-index: 30; display: flex; align-items: center; justify-content: center; padding: 16px; background: rgba(0, 0, 0, 0.6); }
+.sanaltur-modal-box { position: relative; width: 100%; max-width: 560px; max-height: 100%; overflow-y: auto; background: #fff; color: #222; border-radius: 12px; padding: 20px; box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5); }
+.sanaltur-modal-box h3 { margin: 0 36px 10px 0; font-size: 19px; }
+.sanaltur-modal-box p { margin: 0 0 12px; font-size: 15px; line-height: 1.55; white-space: pre-line; }
+.sanaltur-modal-box img, .sanaltur-modal-box video { display: block; width: 100%; max-height: 60vh; object-fit: contain; border-radius: 8px; background: #000; margin-bottom: 12px; }
+.sanaltur-modal-close { position: absolute; top: 12px; right: 12px; width: 32px; height: 32px; border-radius: 50%; border: none; background: #eee; color: #333; font-size: 16px; cursor: pointer; }
+.sanaltur-modal-link { display: inline-block; padding: 10px 16px; border-radius: 8px; background: var(--sanaltur-accent, #007BFF); color: #fff; text-decoration: none; font-weight: bold; font-size: 14px; }
+
+.sanaltur-cover { position: absolute; top: 0; right: 0; bottom: 0; left: 0; z-index: 40; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 14px; padding: 24px; text-align: center; background: rgba(0, 0, 0, 0.72); backdrop-filter: blur(4px); -webkit-backdrop-filter: blur(4px); }
+.sanaltur-cover img { max-width: 220px; max-height: 110px; object-fit: contain; }
+.sanaltur-cover h1 { margin: 0; font-size: 30px; }
+.sanaltur-cover p { margin: 0; max-width: 560px; font-size: 16px; line-height: 1.55; white-space: pre-line; opacity: 0.9; }
+.sanaltur-cover button { margin-top: 8px; padding: 14px 30px; border-radius: 30px; border: none; background: var(--sanaltur-accent, #007BFF); color: #fff; font-size: 17px; font-weight: bold; cursor: pointer; }
+
+@media (max-width: 600px) {
+  .sanaltur-brand { top: 10px; max-width: calc(100% - 150px); padding: 5px 10px; }
+  .sanaltur-brand img { height: 24px; }
+  .sanaltur-brand span { font-size: 13px; }
+  .sanaltur-floors { top: 10px; right: 10px; gap: 6px; }
+  .sanaltur-variants { top: 52px; }
+  .sanaltur-variant-btn { padding: 6px 10px; font-size: 12px; }
+  .sanaltur-floor-btn { padding: 7px 12px; font-size: 12px; }
+  .sanaltur-strip-item { width: 104px; }
+  .sanaltur-strip-item img, .sanaltur-strip-item .sanaltur-strip-thumb { height: 46px; }
+  .sanaltur-actions { right: 10px; }
+  .sanaltur-minimap { left: 10px; }
+  .sanaltur-cover h1 { font-size: 24px; }
+}
+
+/* Klavyeyle gezinirken seçili nokta görünsün */
+.sanaltur-hotspot:focus-visible {
+    outline: 3px solid var(--sanaltur-accent, #007BFF);
+    outline-offset: 3px;
+    border-radius: 50%;
+}
